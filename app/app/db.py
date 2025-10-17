@@ -1,9 +1,33 @@
 """Database operations for the Story Builder app."""
 
-from typing import Any, Sequence
+from typing import Any, Literal, Sequence, TypedDict
 
 from sqlmodel import Session, select
 from models import MiceCard, TryCard
+
+
+class MiceData(TypedDict):
+    """Type definition for MICE card data structure.
+    
+    The code field accepts only valid MICE elements:
+    - M: Milieu (setting/world)
+    - I: Inquiry (question/mystery)
+    - C: Character (personal change)
+    - E: Event (external conflict)
+    """
+    code: Literal["M", "I", "C", "E"]
+    opening: str
+    closing: str
+    nesting_level: int
+
+
+class TryData(TypedDict):
+    """Type definition for Try/Fail card data structure."""
+    type: str
+    order_num: int
+    attempt: str
+    failure: str
+    consequence: str
 
 
 # ==================== Query Functions ====================
@@ -151,8 +175,8 @@ def clear_all_cards(session: Session) -> None:
 
 def load_template_data(
     session: Session,
-    mice_data: Sequence[dict[str, Any]],
-    try_data: Sequence[dict[str, Any]]
+    mice_data: Sequence[MiceData],
+    try_data: Sequence[TryData]
 ) -> None:
     """Clear all cards and load template data into the database."""
     clear_all_cards(session)
