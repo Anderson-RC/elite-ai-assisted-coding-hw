@@ -1,14 +1,21 @@
 """Database operations for the Story Builder app."""
 
-from typing import Any, Sequence, TypedDict
+from typing import Any, Literal, Sequence, TypedDict
 
 from sqlmodel import Session, select
 from models import MiceCard, TryCard
 
 
 class MiceData(TypedDict):
-    """Type definition for MICE card data structure."""
-    code: str
+    """Type definition for MICE card data structure.
+    
+    The code field accepts only valid MICE elements:
+    - M: Milieu (setting/world)
+    - I: Inquiry (question/mystery)
+    - C: Character (personal change)
+    - E: Event (external conflict)
+    """
+    code: Literal["M", "I", "C", "E"]
     opening: str
     closing: str
     nesting_level: int
