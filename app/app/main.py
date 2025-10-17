@@ -12,7 +12,7 @@ from forms import mice_card_form, try_card_form
 DATABASE_URL = "sqlite:///story_builder.db"
 engine = create_engine(DATABASE_URL, echo=True)
 
-def init_db():
+def init_db() -> None:
     SQLModel.metadata.create_all(engine)
 
 # Initialize database on startup
@@ -21,7 +21,7 @@ init_db()
 app = air.Air()
 
 
-def _templates_modal():
+def _templates_modal() -> air.Dialog:
     """Render the story templates selection modal dialog."""
     return air.Dialog(
         air.Div(
@@ -69,7 +69,7 @@ def _templates_modal():
 
 
 @app.get("/")
-def index():
+def index() -> str:
     with Session(engine) as session:
         mice_cards = db.get_all_mice_cards(session)
         try_cards = db.get_all_try_cards(session)
@@ -143,19 +143,19 @@ def index():
 
 
 @app.get("/mice-form")
-def mice_form():
+def mice_form() -> air.Form:
     return mice_card_form()
 
 @app.get("/clear-form")
-def clear_form():
+def clear_form() -> str:
     return ""
 
 @app.get("/try-form")
-def try_form():
+def try_form() -> air.Form:
     return try_card_form()
 
 @app.get("/clear-try-form")
-def clear_try_form():
+def clear_try_form() -> str:
     return ""
 
 @app.post("/try-cards")
@@ -165,7 +165,7 @@ def create_try_card(
     attempt: str = Form(...),
     failure: str = Form(...),
     consequence: str = Form(...)
-):
+) -> Response:
     with Session(engine) as session:
         db.create_try_card(session, type, order_num, attempt, failure, consequence)
 
@@ -173,14 +173,14 @@ def create_try_card(
 
 
 @app.post("/clear-data")
-def clear_data():
+def clear_data() -> Response:
     with Session(engine) as session:
         db.clear_all_cards(session)
 
     return Response(status_code=200, headers={"HX-Redirect": "/"})
 
 @app.post("/load-template/{template_name}")
-def load_template(template_name: str):
+def load_template(template_name: str) -> Response:
     """Load a story template from templates.py into the database."""
     if template_name not in TEMPLATES:
         return Response(status_code=404, content=f"Template '{template_name}' not found")
@@ -193,7 +193,7 @@ def load_template(template_name: str):
     return Response(status_code=200, headers={"HX-Redirect": "/"})
 
 @app.get("/mice-edit/{card_id}")
-def mice_edit(card_id: int):
+def mice_edit(card_id: int) -> air.Form | str:
     with Session(engine) as session:
         card = db.get_mice_card(session, card_id)
         if not card:
@@ -201,7 +201,7 @@ def mice_edit(card_id: int):
         return mice_card_form(card)
 
 @app.get("/mice-card/{card_id}")
-def mice_card(card_id: int):
+def mice_card(card_id: int) -> air.Div | str:
     with Session(engine) as session:
         card = db.get_mice_card(session, card_id)
         if not card:
@@ -215,7 +215,7 @@ def update_mice_card(
     opening: str = Form(...),
     closing: str = Form(...),
     nesting_level: int = Form(...)
-):
+) -> Response | str:
     with Session(engine) as session:
         card = db.update_mice_card(session, card_id, code, opening, closing, nesting_level)
         if not card:
@@ -224,7 +224,7 @@ def update_mice_card(
     return Response(status_code=200, headers={"HX-Redirect": "/"})
 
 @app.delete("/mice-cards/{card_id}")
-def delete_mice_card(card_id: int):
+def delete_mice_card(card_id: int) -> str:
     with Session(engine) as session:
         db.delete_mice_card(session, card_id)
     return ""
@@ -235,14 +235,14 @@ def create_mice_card(
     opening: str = Form(...),
     closing: str = Form(...),
     nesting_level: int = Form(...)
-):
+) -> Response:
     with Session(engine) as session:
         db.create_mice_card(session, code, opening, closing, nesting_level)
 
     return Response(status_code=200, headers={"HX-Redirect": "/"})
 
 @app.get("/try-edit/{card_id}")
-def try_edit(card_id: int):
+def try_edit(card_id: int) -> air.Form | str:
     with Session(engine) as session:
         card = db.get_try_card(session, card_id)
         if not card:
@@ -250,7 +250,7 @@ def try_edit(card_id: int):
         return try_card_form(card)
 
 @app.get("/try-card/{card_id}")
-def get_try_card(card_id: int):
+def get_try_card(card_id: int) -> air.Div | str:
     with Session(engine) as session:
         card = db.get_try_card(session, card_id)
         if not card:
@@ -265,7 +265,7 @@ def update_try_card(
     attempt: str = Form(...),
     failure: str = Form(...),
     consequence: str = Form(...)
-):
+) -> str:
     with Session(engine) as session:
         card = db.update_try_card(session, card_id, type, order_num, attempt, failure, consequence)
         if card:
@@ -273,7 +273,7 @@ def update_try_card(
     return ""
 
 @app.delete("/try-cards/{card_id}")
-def delete_try_card(card_id: int):
+def delete_try_card(card_id: int) -> Response:
     with Session(engine) as session:
         db.delete_try_card(session, card_id)
     return Response(status_code=200, headers={"HX-Redirect": "/"})

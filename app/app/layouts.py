@@ -1,6 +1,8 @@
+from typing import Any
+
 import air
 
-def story_builder_layout(*children):
+def story_builder_layout(*children: Any) -> str:
     """Custom layout for Story Builder app."""
     # Separate head and body content
     head_tags = air.layouts.filter_head_tags(children)
