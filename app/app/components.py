@@ -36,9 +36,9 @@ TRY_COLORS = {
 }
 
 
-def render_mice_card(card: MiceCard):
+def render_mice_card(card: MiceCard) -> air.Div:
     """Render a single MICE card with opening, closing, and controls."""
-    def info_span(icon: str, text: str, extra_class: str = ""):
+    def info_span(icon: str, text: str, extra_class: str = "") -> air.Div:
         return air.Div(
             air.Span(icon, class_="font-bold"),
             air.Span(text),
@@ -76,7 +76,7 @@ def render_mice_card(card: MiceCard):
     )
 
 
-def render_try_card(card: TryCard):
+def render_try_card(card: TryCard) -> air.Div:
     """Render a single Try/Fail card with attempt, failure, consequence, and controls."""
     return air.Div(
         air.Div(
@@ -122,7 +122,7 @@ def render_try_card(card: TryCard):
     )
 
 
-def render_nesting_diagram(mice_cards):
+def render_nesting_diagram(mice_cards: list[MiceCard]) -> air.Div:
     """Render nested boxes showing MICE card structure by nesting level."""
     if not mice_cards:
         return air.Div("No MICE cards to display", class_="text-gray-500 italic")
@@ -130,7 +130,7 @@ def render_nesting_diagram(mice_cards):
     # Sort by nesting level
     sorted_cards = sorted(mice_cards, key=lambda c: c.nesting_level)
 
-    def render_nested_card(card, level):
+    def render_nested_card(card: MiceCard, level: int) -> air.Div:
         """Render a single card with appropriate nesting indentation."""
         indent = (level - 1) * 20  # 20px per level
         return air.Div(
@@ -158,7 +158,7 @@ def render_nesting_diagram(mice_cards):
     )
 
 
-def render_story_timeline(mice_cards, try_cards):
+def render_story_timeline(mice_cards: list[MiceCard], try_cards: list[TryCard]) -> air.Div:
     """Render three-act story timeline showing the complete narrative structure."""
     sorted_mice = sorted(mice_cards, key=lambda c: c.nesting_level)
     sorted_tries = sorted(try_cards, key=lambda c: c.order_num)
@@ -227,7 +227,7 @@ def render_story_timeline(mice_cards, try_cards):
     )
 
 
-def render_mice_help_panel():
+def render_mice_help_panel() -> air.Div:
     """Render the MICE Quotient educational help panel with collapsible toggle."""
     return air.Div(
         air.Div(

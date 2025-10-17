@@ -1,11 +1,13 @@
 """Form builders for MICE and Try/Fail cards."""
 
+from typing import Any
+
 import air
 from models import MiceCard, TryCard
 from components import MICE_COLORS
 
 
-def _form_field(label: str, input_element):
+def _form_field(label: str, input_element: Any) -> air.Div:
     """Helper to create a labeled form field."""
     return air.Div(
         air.Label(label, class_="label"),

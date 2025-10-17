@@ -1,5 +1,7 @@
 """Database operations for the Story Builder app."""
 
+from typing import Any, Sequence
+
 from sqlmodel import Session, select
 from models import MiceCard, TryCard
 
@@ -136,7 +138,7 @@ def delete_try_card(session: Session, card_id: int) -> bool:
     return False
 
 
-def clear_all_cards(session: Session):
+def clear_all_cards(session: Session) -> None:
     """Delete all MICE and Try/Fail cards from the database."""
     for card in session.exec(select(MiceCard)):
         session.delete(card)
@@ -149,9 +151,9 @@ def clear_all_cards(session: Session):
 
 def load_template_data(
     session: Session,
-    mice_data: list[dict],
-    try_data: list[dict]
-):
+    mice_data: Sequence[dict[str, Any]],
+    try_data: Sequence[dict[str, Any]]
+) -> None:
     """Clear all cards and load template data into the database."""
     clear_all_cards(session)
 
